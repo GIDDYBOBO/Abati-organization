@@ -674,31 +674,32 @@ export default function App() {
             <p className="text-stone-500 text-lg font-light uppercase tracking-[0.2em]">Our projected milestones for the next decade.</p>
           </div>
           
-          <div className="relative space-y-12">
+          <div className="relative space-y-24">
             {/* Vertical Line */}
             <div className="absolute left-1/2 top-0 bottom-0 w-px bg-stone-100 -translate-x-1/2 hidden md:block" />
             
             {NGO_DETAILS.roadmap.map((item, index) => (
-              <motion.div 
-                key={index}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2, duration: 0.8 }}
-                className={`relative z-10 p-12 rounded-[3rem] border flex flex-col md:flex-row gap-16 items-center transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] ${item.isDark ? 'bg-[#002147] text-white border-[#002147]' : 'bg-[#F8F9FA] border-stone-50 hover:bg-white'}`}
-              >
-                <div className={`text-5xl font-serif font-bold shrink-0 md:w-64 tracking-tighter ${item.isDark ? 'text-[#F27D26]' : 'text-stone-300'}`}>
-                  {item.year}
-                </div>
-                <div className="flex-1">
-                  <h4 className={`text-3xl font-bold mb-4 tracking-tight ${item.isDark ? 'text-white' : 'text-[#002147]'}`}>{item.title}</h4>
-                  <p className={`text-lg leading-relaxed font-light ${item.isDark ? 'text-white/60' : 'text-stone-500'}`}>{item.desc}</p>
-                </div>
+              <div key={index} className={`relative flex flex-col ${index % 2 === 0 ? 'md:items-start' : 'md:items-end'}`}>
+                <motion.div 
+                  initial={{ opacity: 0, x: index % 2 === 0 ? -40 : 40 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.2, duration: 0.8 }}
+                  className={`relative z-10 p-12 rounded-[3rem] border w-full md:w-[45%] transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] ${item.isDark ? 'bg-[#002147] text-white border-[#002147]' : 'bg-[#F8F9FA] border-stone-50 hover:bg-white'}`}
+                >
+                  <div className={`text-5xl font-serif font-bold mb-6 tracking-tighter ${item.isDark ? 'text-[#F27D26]' : 'text-stone-300'}`}>
+                    {item.year}
+                  </div>
+                  <div>
+                    <h4 className={`text-3xl font-bold mb-4 tracking-tight ${item.isDark ? 'text-white' : 'text-[#002147]'}`}>{item.title}</h4>
+                    <p className={`text-lg leading-relaxed font-light ${item.isDark ? 'text-white/60' : 'text-stone-500'}`}>{item.desc}</p>
+                  </div>
+                </motion.div>
                 {/* Timeline Dot */}
-                <div className={`hidden md:flex w-12 h-12 rounded-full items-center justify-center absolute left-1/2 -translate-x-1/2 bg-white border-8 shadow-sm ${item.isDark ? 'border-[#F27D26]' : 'border-stone-50'}`}>
+                <div className={`hidden md:flex w-12 h-12 rounded-full items-center justify-center absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white border-8 shadow-sm z-20 ${item.isDark ? 'border-[#F27D26]' : 'border-stone-50'}`}>
                   <div className={`w-2 h-2 rounded-full ${item.isDark ? 'bg-[#F27D26]' : 'bg-stone-300'}`} />
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -914,9 +915,14 @@ export default function App() {
             <div>
               <h5 className="text-[10px] font-bold uppercase tracking-[0.3em] text-stone-400 mb-10">FOUNDATION</h5>
               <ul className="space-y-6 text-base text-stone-500 font-light">
-                {['Privacy Policy', 'Terms of Service', 'Gift Notification', 'Impact Reports'].map((item) => (
-                  <li key={item}><a href="#" className="hover:text-[#F27D26] transition-colors flex items-center gap-3 group">
-                    {item}
+                {[
+                  { name: 'Objectives', href: '#aims' },
+                  { name: 'Planning', href: '#roadmap' },
+                  { name: 'Gift Notification', href: '#donate' },
+                  { name: 'Donations', href: '#donate' }
+                ].map((item) => (
+                  <li key={item.name}><a href={item.href} className="hover:text-[#F27D26] transition-colors flex items-center gap-3 group">
+                    {item.name}
                     <ArrowUpRight size={14} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                   </a></li>
                 ))}
