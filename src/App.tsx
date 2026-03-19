@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useSpring, useTransform, useInView } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useSpring, useTransform, useInView, useMotionValue, animate } from 'motion/react';
 import { 
   Heart, 
   Users, 
@@ -30,7 +30,8 @@ import {
   Sparkles,
   Facebook,
   Twitter,
-  Linkedin
+  Linkedin,
+  Star
 } from 'lucide-react';
 
 const NGO_DETAILS = {
@@ -98,6 +99,29 @@ const NGO_DETAILS = {
     { q: "How are the funds utilized?", a: "85% of all donations go directly to program implementation, with 15% reserved for administrative transparency and operational audits." },
     { q: "Is the foundation registered?", a: "Yes, we are a fully registered Non-Governmental Organization with the Corporate Affairs Commission (CAC) under registration number RC. 8384709." },
     { q: "Can I volunteer as a mentor?", a: "Absolutely. We are always looking for professionals to join our Mentorship Circles. Please reach out via our contact form." }
+  ],
+  impactStats: [
+    { value: 12500, label: "People Impacted", suffix: "+" },
+    { value: 48, label: "Projects Completed", suffix: "" },
+    { value: 15, label: "Communities Reached", suffix: "" },
+    { value: 92, label: "Scholarships Awarded", suffix: "%" }
+  ],
+  successStories: [
+    {
+      name: "Tunde Bakare",
+      role: "Scholarship Recipient",
+      story: "The foundation didn't just pay my fees; they gave me a mentor who guided me through my engineering degree. Today, I'm working at a top firm in Lagos."
+    },
+    {
+      name: "Mrs. Adeyemi",
+      role: "Widow Empowerment Program",
+      story: "After losing my husband, I had no means of income. The micro-grant and tailoring training from the foundation helped me start a business that now supports my four children."
+    },
+    {
+      name: "Ikorodu Community",
+      role: "Resource Hub Project",
+      story: "The solar-powered computer lab has transformed our local school. Our children now have access to the same digital tools as those in the city."
+    }
   ]
 };
 
@@ -137,9 +161,31 @@ const AccordionItem = ({ question, answer }: { question: string, answer: string 
   );
 };
 
-const StatItem = ({ value, label, delay = 0 }: { value: string, label: string, delay?: number }) => {
+interface StatItemProps {
+  value: number;
+  label: string;
+  suffix?: string;
+  delay?: number;
+}
+
+const StatItem: React.FC<StatItemProps> = ({ value, label, suffix = "" , delay = 0 }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) => Math.round(latest as number));
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    if (isInView) {
+      const animation = animate(count, value, { duration: 2, delay, ease: "easeOut" });
+      return animation.stop;
+    }
+  }, [isInView, value, delay, count]);
+
+  useEffect(() => {
+    return rounded.on("change", (v) => setDisplayValue(v));
+  }, [rounded]);
   
   return (
     <motion.div 
@@ -149,7 +195,9 @@ const StatItem = ({ value, label, delay = 0 }: { value: string, label: string, d
       transition={{ duration: 0.6, delay }}
       className="text-center md:text-left"
     >
-      <p className="text-5xl md:text-7xl font-serif font-bold text-[#F27D26] mb-2 tracking-tighter">{value}</p>
+      <p className="text-5xl md:text-7xl font-serif font-bold text-[#F27D26] mb-2 tracking-tighter">
+        {displayValue.toLocaleString()}{suffix}
+      </p>
       <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-stone-400">{label}</p>
     </motion.div>
   );
@@ -396,7 +444,7 @@ export default function App() {
               className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.2)] border-[16px] border-white relative group"
             >
               <img 
-                src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=2070&auto=format&fit=crop" 
+                src="https://thumbs.dreamstime.com/b/business-people-walking-up-staircase-team-teamwork-success-concept-isolated-vector-illustration-323378686.jpg" 
                 alt="Community Support" 
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 referrerPolicy="no-referrer"
@@ -436,13 +484,20 @@ export default function App() {
         </div>
       </Section>
 
-      {/* Stats Section */}
-      <Section className="bg-white border-y border-stone-50">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-12 md:gap-24">
-          <StatItem value="2.5k" label="Lives Impacted" delay={0.1} />
-          <StatItem value="15+" label="Communities" delay={0.2} />
-          <StatItem value="100%" label="Transparency" delay={0.3} />
-          <StatItem value="10yr" label="Strategic Plan" delay={0.4} />
+      {/* Impact Statistics Section */}
+      <Section className="bg-white py-24 border-y border-stone-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 md:gap-24">
+            {NGO_DETAILS.impactStats.map((stat, index) => (
+              <StatItem 
+                key={index} 
+                value={stat.value} 
+                label={stat.label} 
+                suffix={stat.suffix} 
+                delay={index * 0.1} 
+              />
+            ))}
+          </div>
         </div>
       </Section>
 
@@ -612,12 +667,10 @@ export default function App() {
               
               <div className="grid grid-cols-2 gap-16">
                 <div className="group cursor-default">
-                  <p className="text-6xl md:text-7xl font-serif font-bold text-[#F27D26] mb-3 transition-transform duration-500 group-hover:translate-x-2">2,500+</p>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-blue-100/40">Lives Transformed</p>
+                  <StatItem value={2500} label="Lives Transformed" suffix="+" />
                 </div>
                 <div className="group cursor-default">
-                  <p className="text-6xl md:text-7xl font-serif font-bold text-[#F27D26] mb-3 transition-transform duration-500 group-hover:translate-x-2">15+</p>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-blue-100/40">Communities Served</p>
+                  <StatItem value={15} label="Communities Served" suffix="+" />
                 </div>
               </div>
             </motion.div>
@@ -657,8 +710,8 @@ export default function App() {
       </Section>
 
       {/* Strategic Roadmap */}
-      <Section id="roadmap" className="bg-white">
-        <div className="max-w-5xl mx-auto">
+      <Section id="roadmap" className="bg-white overflow-hidden">
+        <div className="max-w-5xl mx-auto relative">
           <div className="text-center mb-32">
             <motion.div 
               initial={{ opacity: 0 }}
@@ -675,16 +728,29 @@ export default function App() {
           </div>
           
           <div className="relative space-y-24">
-            {/* Vertical Line */}
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-stone-100 -translate-x-1/2 hidden md:block" />
+            {/* Vertical Line with Progress */}
+            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-stone-100 -translate-x-1/2 hidden md:block">
+              <motion.div 
+                className="absolute top-0 left-0 w-full bg-[#F27D26] origin-top"
+                style={{ 
+                  height: '100%',
+                  scaleY: useSpring(useTransform(scrollYProgress, [0.6, 0.8], [0, 1]), { stiffness: 100, damping: 30 })
+                }}
+              />
+            </div>
             
             {NGO_DETAILS.roadmap.map((item, index) => (
               <div key={index} className={`relative flex flex-col ${index % 2 === 0 ? 'md:items-start' : 'md:items-end'}`}>
                 <motion.div 
-                  initial={{ opacity: 0, x: index % 2 === 0 ? -40 : 40 }}
+                  initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.2, duration: 0.8 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ 
+                    type: "spring",
+                    stiffness: 50,
+                    damping: 20,
+                    delay: index * 0.1 
+                  }}
                   className={`relative z-10 p-12 rounded-[3rem] border w-full md:w-[45%] transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] ${item.isDark ? 'bg-[#002147] text-white border-[#002147]' : 'bg-[#F8F9FA] border-stone-50 hover:bg-white'}`}
                 >
                   <div className={`text-5xl font-serif font-bold mb-6 tracking-tighter ${item.isDark ? 'text-[#F27D26]' : 'text-stone-300'}`}>
@@ -696,10 +762,69 @@ export default function App() {
                   </div>
                 </motion.div>
                 {/* Timeline Dot */}
-                <div className={`hidden md:flex w-12 h-12 rounded-full items-center justify-center absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white border-8 shadow-sm z-20 ${item.isDark ? 'border-[#F27D26]' : 'border-stone-50'}`}>
+                <motion.div 
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  className={`hidden md:flex w-12 h-12 rounded-full items-center justify-center absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-white border-8 shadow-sm z-20 ${item.isDark ? 'border-[#F27D26]' : 'border-stone-50'}`}
+                >
                   <div className={`w-2 h-2 rounded-full ${item.isDark ? 'bg-[#F27D26]' : 'bg-stone-300'}`} />
-                </div>
+                </motion.div>
               </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* Success Stories Section */}
+      <Section id="stories" className="bg-[#F8F9FA] overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-24 gap-8">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="w-12 h-px bg-[#F27D26]" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-[#F27D26]">REAL IMPACT</span>
+              </div>
+              <h2 className="text-6xl md:text-7xl font-serif font-bold text-[#002147] tracking-tighter leading-[0.9]">Success <br />Stories.</h2>
+            </div>
+            <p className="text-stone-500 text-lg font-light max-w-sm leading-relaxed">
+              Voices from the communities we serve, sharing the transformative power of collective action.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {NGO_DETAILS.successStories.map((story, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.2 }}
+                className="group bg-white p-12 rounded-[2.5rem] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] border border-stone-100 relative overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-all duration-700 group-hover:rotate-12">
+                  <Quote size={120} />
+                </div>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-8">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star key={star} size={14} className="fill-[#F27D26] text-[#F27D26]" />
+                    ))}
+                  </div>
+                  <p className="text-stone-600 leading-relaxed italic font-light text-xl mb-10">
+                    "{story.story}"
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[#002147]/5 flex items-center justify-center text-[#002147] font-bold">
+                      {story.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-[#002147] font-bold text-lg leading-tight">{story.name}</p>
+                      <p className="text-stone-400 text-xs uppercase tracking-widest font-bold">{story.role}</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
