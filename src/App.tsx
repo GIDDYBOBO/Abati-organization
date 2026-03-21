@@ -91,7 +91,7 @@ const NGO_DETAILS = {
     }
   ],
   roadmap: [
-    { year: "2024—2025", title: "Digital Literacy Hubs", desc: "Establishing 10 solar-powered computer labs in rural communities to provide basic coding and data management training." },
+    { year: "2024—2025", title: "Community & Widow Empowerment", desc: "Upholding and supporting the Okobaba community through the Okobaba Football Club initiative and providing sustainable livelihood programs for widows." },
     { year: "2026", title: "Sustainable Agri-Orchards", desc: "Launching community-managed farms that fund local scholarship programs through sustainable cash-crop harvesting." },
     { year: "2027 & Beyond", title: "Abati Leadership Institute", desc: "Construction of a premier residential academy for high-potential, low-income students focusing on ethics and governance.", isDark: true }
   ],
