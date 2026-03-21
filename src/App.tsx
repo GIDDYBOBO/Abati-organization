@@ -37,7 +37,7 @@ import {
 const NGO_DETAILS = {
   name: "Obafemi Abati Foundation",
   motto: "One for all, all for one",
-  registration: "RC. 8384709",
+  registration: "RC.83844709",
   address: "Plot 9, Agoro Court, Odunifa Street by Kano Street, Ebute Metta, Lagos",
   nairaAccount: {
     number: "1029681768",
@@ -101,26 +101,26 @@ const NGO_DETAILS = {
     { q: "Can I volunteer as a mentor?", a: "Absolutely. We are always looking for professionals to join our Mentorship Circles. Please reach out via our contact form." }
   ],
   impactStats: [
-    { value: 12500, label: "People Impacted", suffix: "+" },
-    { value: 48, label: "Projects Completed", suffix: "" },
+    { value: 2500, label: "People Impacted", suffix: "+" },
+    { value: 17, label: "Projects Completed", suffix: "" },
     { value: 15, label: "Communities Reached", suffix: "" },
     { value: 92, label: "Scholarships Awarded", suffix: "%" }
   ],
   successStories: [
     {
-      name: "Tunde Bakare",
+      name: "Obafemi Abati Initiatives",
       role: "Scholarship Recipient",
-      story: "The foundation didn't just pay my fees; they gave me a mentor who guided me through my engineering degree. Today, I'm working at a top firm in Lagos."
+      story: "Through the foundation's comprehensive support, we've seen a remarkable shift in educational access. Their commitment goes beyond financial aid, providing the mentorship and resources necessary for students to excel in competitive academic environments and secure their future careers."
     },
     {
-      name: "Mrs. Adeyemi",
+      name: "Obafemi Abati",
       role: "Widow Empowerment Program",
       story: "After losing my husband, I had no means of income. The micro-grant and tailoring training from the foundation helped me start a business that now supports my four children."
     },
     {
-      name: "Ikorodu Community",
-      role: "Resource Hub Project",
-      story: "The solar-powered computer lab has transformed our local school. Our children now have access to the same digital tools as those in the city."
+      name: "Okobaba Community",
+      role: "Okobaba Football Club Initiative",
+      story: "The Okobaba Football Club initiative has provided a vital platform for our youth to develop their talents and stay engaged in positive activities. It's more than just a game; it's building discipline, teamwork, and a sense of pride within our community."
     }
   ]
 };
@@ -208,6 +208,7 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
+  const [activeContact, setActiveContact] = useState<string | null>(null);
   
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -444,8 +445,8 @@ export default function App() {
               className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.2)] border-[16px] border-white relative group"
             >
               <img 
-                src="https://thumbs.dreamstime.com/b/business-people-walking-up-staircase-team-teamwork-success-concept-isolated-vector-illustration-323378686.jpg" 
-                alt="Community Support" 
+                src="https://lh3.googleusercontent.com/d/129jf9P9F3PYQS-g4E0wH2w5oUK4NhXm7" 
+                alt="Obafemi Abati Foundation Hero" 
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 referrerPolicy="no-referrer"
               />
@@ -1026,14 +1027,39 @@ export default function App() {
               <h4 className="font-serif font-bold text-3xl text-[#002147] mb-8 tracking-tighter">{NGO_DETAILS.name}</h4>
               <p className="text-lg text-stone-500 max-w-sm leading-relaxed mb-10 font-light">
                 {NGO_DETAILS.address} <br />
-                Registration: <span className="font-bold text-[#002147]">{NGO_DETAILS.registration}</span>
+                Registration: <span className="font-bold text-[#002147]">{NGO_DETAILS.registration}</span> <br />
+                hotline: <span className="font-bold text-[#002147]">+2347039781656</span>
               </p>
-              <div className="flex gap-6">
-                {[Globe, Mail, Phone].map((Icon, i) => (
-                  <a key={i} href="#" className="w-14 h-14 rounded-2xl border border-stone-100 flex items-center justify-center text-stone-400 hover:text-[#F27D26] hover:border-[#F27D26] hover:bg-[#F27D26]/5 transition-all shadow-sm hover:shadow-md">
-                    <Icon size={22} />
-                  </a>
-                ))}
+              <div className="flex flex-col gap-4">
+                <div className="flex gap-6">
+                  {[
+                    { Icon: Globe, text: "obafemiabatifoundation.org.ng" },
+                    { Icon: Mail, text: "obafemiabatifoundation@gmail.com" },
+                    { Icon: Phone, text: "+2347039781656" }
+                  ].map((item, i) => (
+                    <button 
+                      key={i} 
+                      onMouseEnter={() => setActiveContact(item.text)}
+                      onMouseLeave={() => setActiveContact(null)}
+                      onClick={() => setActiveContact(activeContact === item.text ? null : item.text)}
+                      className="w-14 h-14 rounded-2xl border border-stone-100 flex items-center justify-center text-stone-400 hover:text-[#F27D26] hover:border-[#F27D26] hover:bg-[#F27D26]/5 transition-all shadow-sm hover:shadow-md"
+                    >
+                      <item.Icon size={22} />
+                    </button>
+                  ))}
+                </div>
+                <AnimatePresence>
+                  {activeContact && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="text-[#F27D26] font-bold text-sm tracking-wider"
+                    >
+                      {activeContact}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
             
