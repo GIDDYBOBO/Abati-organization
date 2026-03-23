@@ -35,14 +35,14 @@ import {
 } from 'lucide-react';
 
 const NGO_DETAILS = {
-  name: "Obafemi Abati Foundation",
-  motto: "One for all, all for one",
+  name: "Obafemi abati foundation",
+  motto: "legacy defined by action, One for all, all for one",
   registration: "RC.83844709",
   address: "Plot 9, Agoro Court, Odunifa Street by Kano Street, Ebute Metta, Lagos",
   nairaAccount: {
     number: "1029681768",
     bank: "United Bank for Africa (UBA)",
-    name: "Obafemi Abati Foundation"
+    name: "Obafemi abati foundation"
   },
   dollarAccount: {
     number: "1700001897",
